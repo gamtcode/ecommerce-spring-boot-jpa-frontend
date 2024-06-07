@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ecommerce with Spring Boot and JPA</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            background: url('bg.svg') no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+        }
+
+        label {
+            text-transform: capitalize;
+        }
+
+        .input-group input {
+            flex-grow: 1;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            max-width: 280px;
+            margin-right: 10px;
+            margin-left: 10px;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .input-group input::placeholder {
+            font-size: 16px;
+        }
+
+        .input-group label {
+            margin-left: 1ch;
+            width: 60px;
+            margin-right: 5px;
+        }
+
+        .input-group label::after {
+            content: ':';
+            margin-left: 1px;
+        }
+
+        /* Specific styles for mobile devices */
+        @media (max-width: 600px) {
+            .input-group label {
+                width: 80px;
+                margin-right: 2px;
+            }
+        }
+
+        /* Styles specific to tablets */
+        @media (min-width: 600px) and (max-width: 900px) {
+            body {
+                font-size: 1.4rem;
+            }
+
+            .tablet-text-lg {
+                font-size: 1.4rem;
+            }
+
+            .tablet-text-xl {
+                font-size: 2rem;
+            }
+
+            .input-group input::placeholder {
+                font-size: 19px;
+            }
+
+            .input-group input {
+                max-width: 405px;
+            }
+        }
+
+        #clearButton {
+            display: none;
+            margin-right: 10px;
+            background-color: #808080;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: flex-start;
+        }
+    </style>
+</head>
+<body class="p-6 bg-gray-100">
+<h1 class="text-lg sm:text-2xl tablet-text-xl font-bold mb-4">Ecommerce with Spring Boot and JPA</h1>
+<h2 class="text-base sm:text-xl tablet-text-lg mb-4 text-justify">This project consists of a Java back-end
+    application that implements the business logic for an e-commerce system. However, it's important to clarify that
+    this project does not represent a complete e-commerce system. It primarily focuses on the logic of relationships
+    between entities and the persistence of entity attributes in the database.</h2>
+<h2 class="text-base sm:text-xl tablet-text-lg mb-4 text-justify">The project's entities include products,
+    categories, orders, and users, and the system manages these entities through well-defined classes and
+    relationships. The goal is to provide a foundation for e-commerce operations, ensuring data integrity and
+    transaction efficiency.</h2>
+<h2 class="text-base sm:text-xl tablet-text-lg mb-4 text-justify">Additionally, the project includes a front-end
+    application whose only purpose is to serve as an interface for executing persistence methods. This allows for
+    testing and visualizing server responses to requests, providing a practical environment for verifying the
+    functioning of back-end processes.</h2>
+<h2 class="text-base sm:text-xl tablet-text-lg mb-4 text-justify">Therefore, the current scope of the project,
+    developed with Spring Boot, Spring MVC, and Spring Data JPA, covers domain modeling, implementation of services
+    and REST resources, and data persistence logic.</h2>
+<h2 class="text-base sm:text-xl tablet-text-lg mb-4 text-justify">This application is hosted in the AWS Cloud via AWS
+    Elastic Beanstalk, leveraging resources such as AWS RDS (Relational Database Service) with PostgreSQL, AWS EC2
+    (Elastic Compute Cloud), AWS S3 (Simple Storage Service), CloudFront distributions, Security Groups, Policies and
+    Roles of AWS IAM (Identity and Access Management), ACM (AWS Certificate Manager) for SSL certificates, among
+    others.</h2>
+<h2 class="text-base sm:text-xl tablet-text-lg mb-4 text-justify">For additional information, please <a
+        href="https://github.com/gamtcode/ecommerce-spring-boot-jpa-backend"
+        target="_blank"
+        style="color: blue;">access the repository on GitHub.</a></h2>
+<div class="flex flex-wrap">
+    <div class="w-full p-2 sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5">
+        <select id="entitySelect" class="border p-2 mb-4 w-full">
+            <option value="">Select an entity</option>
+            <option value="user">User</option>
+            <option value="order">Order</option>
+            <option value="product">Product</option>
+            <option value="category">Category</option>
+        </select>
+    </div>
+    <div class="w-full p-2 sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5">
+        <select id="operationSelect" class="border p-2 mb-4 w-full">
+            <option value="">Select an operation</option>
+            <option value="create">Create</option>
+            <option value="read">Read</option>
+            <option value="update">Update</option>
+            <option value="delete">Delete</option>
+        </select>
+    </div>
+</div>
+<div id="formContainer" class="mb-4"></div>
+
+<div class="button-group">
+    <button id="clearButton" class="tablet-text-lg" style="display: none;">Clear result</button>
+    <button id="submitButton" class="bg-blue-500 text-white p-2" style="display: none;">Submit</button>
+</div>
+
+<div id="response" class="border p-2 mt-4"></div>
+
+<script type="module" src="app.js"></script>
+<script>
+    document.getElementById('entitySelect').addEventListener('change', function () {
+        checkSelections();
+    });
+
+    document.getElementById('operationSelect').addEventListener('change', function () {
+        checkSelections();
+    });
+
+    function checkSelections() {
+        var entitySelect = document.getElementById('entitySelect');
+        var operationSelect = document.getElementById('operationSelect');
+        var clearButton = document.getElementById('clearButton');
+
+        if (entitySelect.value !== "" && operationSelect.value !== "") {
+            clearButton.style.display = 'inline-block';
+        } else {
+            clearButton.style.display = 'none';
+        }
+    }
+</script>
+</body>
+</html>

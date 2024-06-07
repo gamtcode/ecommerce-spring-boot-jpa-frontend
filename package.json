@@ -1,0 +1,15 @@
+{
+  "name": "ecommerce-spring-boot-jpa-frontend",
+  "version": "1.0.0",
+  "dependencies": {
+    "react": "^18.3.1",
+    "typescript": "^5.4.5"
+  },
+  "devDependencies": {
+    "lite-server": "^2.6.1"
+  },
+  "scripts": {
+    "start": "lite-server",
+    "tsc:watch": "tsc --watch"
+  }
+}
